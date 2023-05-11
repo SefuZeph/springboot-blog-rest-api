@@ -4,6 +4,7 @@ import com.springboot.blog.springbootblogrestapi.payload.PostDto
 import com.springboot.blog.springbootblogrestapi.service.PostService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -17,5 +18,10 @@ class PostController(val postService: PostService) {
     @PostMapping
     fun createPost(@RequestBody postDto: PostDto): ResponseEntity<PostDto> {
         return ResponseEntity(postService.createPost(postDto), HttpStatus.CREATED)
+    }
+
+    @GetMapping
+    fun getAllPosts(): List<PostDto> {
+        return postService.getAllPosts()
     }
 }

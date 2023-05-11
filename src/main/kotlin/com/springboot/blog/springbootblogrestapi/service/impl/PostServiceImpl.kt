@@ -9,13 +9,31 @@ import org.springframework.stereotype.Service
 @Service
 class PostServiceImpl(val postRepository: PostRepository) : PostService {
     override fun createPost(postDto: PostDto): PostDto {
-        val post = postRepository.save(
-            Post(
-                title = postDto.title, content = postDto.content, description = postDto.description
-            )
-        )
+        // convert DTO to entity
+        val post = postRepository.save(mapToEntity(postDto))
 
         // convert entity to dto
-        return PostDto(id = post.id, title = post.title, content = post.content, description = post.description)
+        return mapToDto(post)
+    }
+
+    override fun getAllPosts(): List<PostDto> {
+
+        val posts = postRepository.findAll()
+        return posts.map { post ->
+            mapToDto(post)
+        }
+    }
+
+
+    // map dto to entity
+    private fun mapToEntity(postDto: PostDto): Post {
+        return Post(
+            title = postDto.title, content = postDto.content, description = postDto.description
+        )
+    }
+
+    // convert entity to dto
+    private fun mapToDto(post: Post): PostDto {
+        return PostDto(post.id, post.title, post.content, post.description)
     }
 }

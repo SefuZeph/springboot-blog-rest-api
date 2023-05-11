@@ -5,4 +5,6 @@ import com.springboot.blog.springbootblogrestapi.payload.PostDto
 interface PostService {
 
     fun createPost(postDto: PostDto): PostDto
+
+    fun getAllPosts():List<PostDto>
 }
