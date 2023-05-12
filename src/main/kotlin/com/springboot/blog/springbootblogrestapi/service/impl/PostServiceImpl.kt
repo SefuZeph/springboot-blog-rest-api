@@ -1,6 +1,7 @@
 package com.springboot.blog.springbootblogrestapi.service.impl
 
 import com.springboot.blog.springbootblogrestapi.entity.Post
+import com.springboot.blog.springbootblogrestapi.exception.ResourceNotFoundException
 import com.springboot.blog.springbootblogrestapi.payload.PostDto
 import com.springboot.blog.springbootblogrestapi.repository.PostRepository
 import com.springboot.blog.springbootblogrestapi.service.PostService
@@ -22,6 +23,13 @@ class PostServiceImpl(val postRepository: PostRepository) : PostService {
         return posts.map { post ->
             mapToDto(post)
         }
+    }
+
+    override fun getPostById(id:Long): PostDto {
+       val post =postRepository.findById(id).orElseThrow {
+           ResourceNotFoundException("POST","Id",id)
+       }
+        return  mapToDto(post)
     }
 
 

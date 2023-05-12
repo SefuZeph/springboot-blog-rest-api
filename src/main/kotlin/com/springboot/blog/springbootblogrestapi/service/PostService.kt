@@ -7,4 +7,7 @@ interface PostService {
     fun createPost(postDto: PostDto): PostDto
 
     fun getAllPosts():List<PostDto>
+
+    fun getPostById(id:Long):PostDto
+
 }
