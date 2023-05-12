@@ -10,37 +10,49 @@ import org.springframework.stereotype.Service
 @Service
 class PostServiceImpl(val postRepository: PostRepository) : PostService {
     override fun createPost(postDto: PostDto): PostDto {
-        // convert DTO to entity
         val post = postRepository.save(mapToEntity(postDto))
-
-        // convert entity to dto
         return mapToDto(post)
     }
 
     override fun getAllPosts(): List<PostDto> {
-
         val posts = postRepository.findAll()
         return posts.map { post ->
             mapToDto(post)
         }
     }
 
-    override fun getPostById(id:Long): PostDto {
-       val post =postRepository.findById(id).orElseThrow {
-           ResourceNotFoundException("POST","Id",id)
-       }
-        return  mapToDto(post)
+    override fun getPostById(id: Long): PostDto {
+        val post = postRepository.findById(id).orElseThrow {
+            ResourceNotFoundException("POST", "Id", id)
+        }
+        return mapToDto(post)
     }
 
+    override fun updatePost(postDto: PostDto, id: Long): PostDto {
+        val post = postRepository.findById(id).orElseThrow {
+            ResourceNotFoundException("POST", "Id", id)
+        }
+        post.title = postDto.title
+        post.content = postDto.content
+        post.description = postDto.description
 
-    // map dto to entity
+        val updatePost = postRepository.save(post)
+        return mapToDto(updatePost)
+    }
+
+    override fun deletePost(id: Long) {
+        val post = postRepository.findById(id).orElseThrow {
+            ResourceNotFoundException("POST", "Id", id)
+        }
+        postRepository.deleteById(post.id)
+    }
+
     private fun mapToEntity(postDto: PostDto): Post {
         return Post(
             title = postDto.title, content = postDto.content, description = postDto.description
         )
     }
 
-    // convert entity to dto
     private fun mapToDto(post: Post): PostDto {
         return PostDto(post.id, post.title, post.content, post.description)
     }

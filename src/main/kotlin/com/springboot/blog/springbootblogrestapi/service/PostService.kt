@@ -10,4 +10,8 @@ interface PostService {
 
     fun getPostById(id:Long):PostDto
 
+    fun updatePost(postDto: PostDto,id:Long):PostDto
+
+    fun deletePost(id:Long)
+
 }
