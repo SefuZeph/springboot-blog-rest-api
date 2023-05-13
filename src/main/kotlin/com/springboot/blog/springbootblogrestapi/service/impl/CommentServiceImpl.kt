@@ -3,16 +3,19 @@ package com.springboot.blog.springbootblogrestapi.service.impl
 import com.springboot.blog.springbootblogrestapi.entity.Comment
 import com.springboot.blog.springbootblogrestapi.exception.BlogApiException
 import com.springboot.blog.springbootblogrestapi.exception.ResourceNotFoundException
+import com.springboot.blog.springbootblogrestapi.modelMapper
 import com.springboot.blog.springbootblogrestapi.payload.CommentDto
 import com.springboot.blog.springbootblogrestapi.repository.CommentRepository
 import com.springboot.blog.springbootblogrestapi.repository.PostRepository
 import com.springboot.blog.springbootblogrestapi.service.CommentService
+import org.modelmapper.ModelMapper
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 
 @Service
-class CommentServiceImpl(val commentRepository: CommentRepository, val postRepository: PostRepository) :
-    CommentService {
+class CommentServiceImpl(
+    val commentRepository: CommentRepository, val postRepository: PostRepository, val modelMapper: ModelMapper
+) : CommentService {
     override fun createComment(postId: Long, commentDto: CommentDto): CommentDto {
         val comment = mapToEntity(commentDto)
         // retrieve post entity by id
@@ -54,8 +57,7 @@ class CommentServiceImpl(val commentRepository: CommentRepository, val postRepos
             throw BlogApiException(HttpStatus.BAD_REQUEST, "Comment does not belong to the post")
         }
         val updateComment = Comment(
-            id = comment.id,
-            name = commentDto.name, email = commentDto.email, body = commentDto.body, post = post
+            id = comment.id, name = commentDto.name, email = commentDto.email, body = commentDto.body, post = post
         )
         return mapToDto(commentRepository.save(updateComment))
     }
@@ -76,14 +78,12 @@ class CommentServiceImpl(val commentRepository: CommentRepository, val postRepos
     }
 
     // entity to dto
-    fun mapToDto(comment: Comment): CommentDto {
-        return CommentDto(id = comment.id, name = comment.name, email = comment.email, body = comment.body)
+    private fun mapToDto(comment: Comment): CommentDto {
+        return modelMapper.map(comment, CommentDto::class.java)
     }
 
     // dto to entity
-    fun mapToEntity(commentDto: CommentDto): Comment {
-        return Comment(
-            id = commentDto.id, name = commentDto.name, email = commentDto.email, body = commentDto.body,
-        )
+    private fun mapToEntity(commentDto: CommentDto): Comment {
+        return modelMapper.map(commentDto, Comment::class.java)
     }
 }

@@ -6,14 +6,14 @@ import com.springboot.blog.springbootblogrestapi.payload.PostDto
 import com.springboot.blog.springbootblogrestapi.payload.PostResponse
 import com.springboot.blog.springbootblogrestapi.repository.PostRepository
 import com.springboot.blog.springbootblogrestapi.service.PostService
+import org.modelmapper.ModelMapper
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
-import org.springframework.data.domain.Sort.Direction
 import org.springframework.stereotype.Service
 
 @Service
-class PostServiceImpl(val postRepository: PostRepository) : PostService {
+class PostServiceImpl(val postRepository: PostRepository, val modelMapper: ModelMapper) : PostService {
     override fun createPost(postDto: PostDto): PostDto {
         val post = postRepository.save(mapToEntity(postDto))
         return mapToDto(post)
@@ -66,12 +66,10 @@ class PostServiceImpl(val postRepository: PostRepository) : PostService {
     }
 
     private fun mapToEntity(postDto: PostDto): Post {
-        return Post(
-            title = postDto.title, content = postDto.content, description = postDto.description
-        )
+        return modelMapper.map(postDto, Post::class.java)
     }
 
     private fun mapToDto(post: Post): PostDto {
-        return PostDto(post.id, post.title, post.content, post.description)
+        return modelMapper.map(post, PostDto::class.java)
     }
 }
