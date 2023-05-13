@@ -54,11 +54,25 @@ class CommentServiceImpl(val commentRepository: CommentRepository, val postRepos
             throw BlogApiException(HttpStatus.BAD_REQUEST, "Comment does not belong to the post")
         }
         val updateComment = Comment(
-            id=comment.id,
+            id = comment.id,
             name = commentDto.name, email = commentDto.email, body = commentDto.body, post = post
         )
-        println("${updateComment}")
         return mapToDto(commentRepository.save(updateComment))
+    }
+
+    override fun deleteById(postId: Long, commentId: Long) {
+        // retrieve post entity by id
+        val post = postRepository.findById(postId).orElseThrow { ResourceNotFoundException("POST", "Id", postId) }
+        // retrieve comment entity by id
+        val comment =
+            commentRepository.findById(commentId).orElseThrow { ResourceNotFoundException("Comment", "Id", commentId) }
+
+        if (comment.post.id != post.id) {
+            throw BlogApiException(HttpStatus.BAD_REQUEST, "Comment does not belong to the post")
+        }
+
+        commentRepository.deleteById(commentId)
+
     }
 
     // entity to dto

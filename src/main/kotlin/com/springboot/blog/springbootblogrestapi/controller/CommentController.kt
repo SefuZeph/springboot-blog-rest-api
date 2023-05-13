@@ -38,4 +38,10 @@ class CommentController(val commentService: CommentService) {
         return ResponseEntity.ok(updateComment)
     }
 
+    @DeleteMapping("posts/{postId}/comments/{commentId}")
+    fun deleteById(@PathVariable postId: Long, @PathVariable commentId: Long): ResponseEntity<String> {
+        commentService.deleteById(postId, commentId)
+        return ResponseEntity.ok("Comment successfully deleted")
+    }
+
 }

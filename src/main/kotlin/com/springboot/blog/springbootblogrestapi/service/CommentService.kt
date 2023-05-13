@@ -9,5 +9,7 @@ interface CommentService {
 
     fun getCommentById(postId: Long, commentId: Long): CommentDto
 
-    fun updateCommentById(postId: Long, commentId: Long, commentDto: CommentDto):CommentDto
+    fun updateCommentById(postId: Long, commentId: Long, commentDto: CommentDto): CommentDto
+
+    fun deleteById(postId: Long, commentId: Long)
 }
